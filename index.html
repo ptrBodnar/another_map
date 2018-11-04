@@ -24,7 +24,7 @@
 			height: 100vh;
 		}
 
-		div.info {
+		div#infoHidden {
 			position: fixed;
 			z-index: 1000;
 			width: 50%;
@@ -32,14 +32,25 @@
 			text-align: left;
 			top: 25%;
 			left: 25%;
-			/*margin-left: -70px;*/
-			/*margin-top: -50px;*/
+			display: none;
 			background-color: white;
 		}
 
-		div.infoHidden {
-			display: none;
-		}
+		.close {
+			color: #aaaaaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold; }
+
+		.close:hover,
+		.close:focus {
+			color: #949494;
+			text-decoration: none;
+			cursor: pointer; }
+
+		/*div#infoHidden {*/
+			/*display: none;*/
+		/*}*/
 	</style>
 
 
@@ -51,7 +62,8 @@
 <div id="body">
 	<div id="container">
 		<div id="mapid"></div>
-		<div class="infoHidden">
+		<div id="infoHidden" class="">
+			<span class="close">&times;</span>
 			<h1></h1>
 			<p></p>
 		</div>
@@ -143,14 +155,28 @@
 
 
 				layer.on('click', function (d) {
-					console.log('gg')
-					d3.select('div.infoHidden').attr('class', 'info')
-					d3.select('div.info').text(''+ d.layer.feature.properties.line +
+					console.log('gg');
+
+					var modal = document.getElementById('infoHidden');
+					var span = document.getElementsByClassName("close")[0];
+
+					modal.style.display = "block";
+					span.onclick = function () {
+						modal.style.display = "none";
+					};
+					window.onclick = function (event) {
+						if (event.target == modal) {
+							modal.style.display = "none";
+						}
+					};
+
+					d3.select('div#infoHidden p').text(''+ d.layer.feature.properties.line +
 							' ' + d.layer.feature.properties.station +
 							' ' + d.layer.feature.properties.score)
 			});
 
 //				layer.bindPopup(function (d) {
+//					console.log(d);
 //					return 'gg'
 //				}).openPopup();
 //				mapItself.on('click', function (d) {
