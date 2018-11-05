@@ -64,8 +64,22 @@
 		<div id="mapid"></div>
 		<div id="infoHidden" class="">
 			<span class="close">&times;</span>
-			<h1></h1>
-			<p></p>
+			<h1 class="station"></h1>
+			<h3 class="line"></h3>
+			<h3 class="station_laying_type"></h3>
+
+			<div class="info"></div>
+
+			<!--<p class="elevator_lift"></p>-->
+			<!--<p class="ramps_slopes"></p>-->
+			<!--<p class="staff"></p>-->
+			<!--<p class="сall_button_elevator"></p>-->
+			<!--<p class="turnstiles_size"></p>-->
+			<!--<p class="doors_size"></p>-->
+			<!--<p class="tile"></p>-->
+			<!--<p class="light"></p>				-->
+			<!--<p class="paydesk_height"></p>		-->
+			<!--<p class="automaton_height"></p>-->
 		</div>
 	</div>
 
@@ -179,10 +193,55 @@
 						checker = 1;
 					};
 
+					d3.select('h1.station').text(d.layer.feature.properties.station);
 
-					d3.select('div#infoHidden p').text(''+ d.layer.feature.properties.line +
-							' ' + d.layer.feature.properties.station +
-							' ' + d.layer.feature.properties.score)
+					d3.select('h3.line').text(d.layer.feature.properties.line + 'гілка');
+
+					d3.select('h3.station_laying_type').text(
+							'Тип залягання станції' + d.layer.feature.properties.station_laying_type
+					);
+
+//					d3.select("div#infoHidden div.info").nodes()[0].innerHTML =
+//							'<p>'+ d.layer.feature.properties.station + '</br>' +
+//							' ' + d.layer.feature.properties.line + '</br>' +
+//							' ' + d.layer.feature.properties.score + '</p>'
+
+					var table = d3.select('div#infoHidden div.info').append('table')
+					var thead = table.append('thead')
+					var	tbody = table.append('tbody');
+
+					var columns = ['Змінна', 'Значення'];
+
+					var dem = Object.entries(d.layer.feature.properties);
+
+					var table = dem.map(function(d) {return {'Змінна':d[0], 'Значення':d[1]} } )
+
+					// append the header row
+					thead.append('tr')
+							.selectAll('th')
+							.data(['Змінна', 'Значення']).enter()
+							.append('th')
+							.text(function (column) { return column; });
+
+					// create a row for each object in the data
+					var rows = tbody.selectAll('tr')
+							.data(table)
+							.enter()
+							.append('tr');
+
+
+					// create a cell in each row for each column
+					var cells = rows.selectAll('td')
+							.data(function (row) {
+								return columns.map(function (column) {
+									return {column: column, value: row[column]};
+								});
+							})
+							.enter()
+							.append('td')
+							.text(function (dd) {
+								return dd.value
+							});
 			});
 
 //				layer.bindPopup(function (d) {
